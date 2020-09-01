@@ -20,7 +20,7 @@ Very clean and sleek website with short 10+ minute read articles on ML, applying
 
 ### https://www.youtube.com/watch?v=bxe2T-V8XRs&list=PLiaHhY2iBX9hdHaRr6b7XevZtgZRa1PoU
 
-`Welchlabs` has a playlist of 7 videos which are all less than 10 minutes long demystidying neural networks.
+`Welchlabs` has a playlist of 7 videos which are all less than 10 minutes long, aimed towards demystifying neural networks.
 
 ### https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi
 
