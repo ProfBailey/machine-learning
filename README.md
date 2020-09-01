@@ -16,6 +16,10 @@ This website contains tons of step-by-step guides (foundations, beginner, interm
 
 Very clean and sleek website with short 10+ minute read articles on ML, applying ML algorithms in python, etc.
 
+###
+
+This article contains TONS of cute, useful, aesthetic cheat sheets about ML, Python, and math!
+
 ## Youtube Videos
 
 ### https://www.youtube.com/watch?v=bxe2T-V8XRs&list=PLiaHhY2iBX9hdHaRr6b7XevZtgZRa1PoU
