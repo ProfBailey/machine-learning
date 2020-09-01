@@ -10,9 +10,13 @@ Summary of source
 
 ### https://machinelearningmastery.com/start-here/#algorithms
 
-This website contains tons of step-by-step guides (foundations, beginner, intermediate, and advanced level) which are really to getting a quick. brief overview of certain topics. I personally find the courses under "Understand ML Algorithms" especially useful in providing a useful overview on what certain ML algorithms do. It contains more advanced guides on more specific ML algorithms.
+This website contains tons of step-by-step guides (foundations, beginner, intermediate, and advanced level) which are really to getting a quick. brief overview of certain topics. I personally find the courses under "Understand ML Algorithms" especially useful in providing a useful overview on what certain ML algorithms do. It also contains more advanced guides on specific ML algorithms as well.
 
 ## Youtube Videos
+
+### https://www.youtube.com/watch?v=bxe2T-V8XRs&list=PLiaHhY2iBX9hdHaRr6b7XevZtgZRa1PoU
+
+`Welchlabs` has a playlist of 7 videos which are all less than 10 minutes long demystidying neural networks.
 
 ### https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi
 
