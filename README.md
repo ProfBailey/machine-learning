@@ -18,3 +18,6 @@ This website contains tons of step-by-step guides (foundations, beginner, interm
 
 This youtube channel `3blue1brown`, has a set of 4 videos in a series dedicated on deep learning topics, neural networks, and backpropagation that a lot of people seem to be raving with compliments like "vividly clear explanations of very tricky subjects."
 
+### https://www.youtube.com/watch?v=yDLKJtOVx5c&list=PLD0F06AA0D2E8FFBA
+
+This youtube channel `mathematicalmonk` focuses more on the mathematical aspects of many ML concepts, very theoretical and has a collection of 160+ videos on many topics.
