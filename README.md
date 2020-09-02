@@ -33,3 +33,11 @@ This youtube channel `3blue1brown`, has a set of 4 videos in a series dedicated 
 ### https://www.youtube.com/watch?v=yDLKJtOVx5c&list=PLD0F06AA0D2E8FFBA
 
 This youtube channel `mathematicalmonk` focuses more on the mathematical aspects of many ML concepts, very theoretical and has a collection of 160+ videos on many topics.
+
+### https://www.youtube.com/watch?v=J4Wdy0Wc_xQ&t=2s
+
+StatQuest with Josh Starmer is an extremly helpful channel on YouTube. The channel has a two-part series on Random Forests, although the videos are a bit itroductory. Part 1 walks through the steps to build, use and evaluate a random forest.
+
+### https://www.youtube.com/watch?v=sQ870aTKqiM&t=2s
+
+Part 2 of the StatQuest Random Forest series expands on part 1 and talks about how to deal with missing data and how they can be used to cluster samples.
