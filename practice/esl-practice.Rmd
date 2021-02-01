@@ -1,0 +1,345 @@
+---
+title: "Elements of Statistical Learning Practice"
+author: "Brittney Bailey"
+date: "`r format(Sys.time(), '%d %B, %Y')`" 
+urlcolor: blue
+linkcolor: blue
+output:
+  pdf_document:
+    fig_height: 2
+    fig_width: 3.5
+    number_sections: yes
+    latex_engine: xelatex
+classoption: fleqn
+# mainfont: Roboto Light
+# sansfont: Roboto Light
+# monofont: Roboto Mono
+#geometry: "top=0.5in,bottom=0.5in"
+header-includes:
+  - \usepackage{fancyhdr}
+#  - \pagenumbering{gobble}
+---
+
+```{r setup, include=FALSE}
+# load packages
+library(tidyverse)
+library(kableExtra)
+
+library(glmertree) # partykit libcoin mvtnorm
+
+
+# set some code chunk defaults
+knitr::opts_chunk$set(
+  # code defaults
+  tidy = FALSE, size = "tiny",
+  # indent plain R output
+  comment = "\t",
+  # center figures
+  fig.align = "center", 
+  # suppress warnings and messages
+  warning = FALSE, message = FALSE) 
+# set black & white plot theme as default
+theme_set(theme_classic()) 
+# slower to display scientific notation; "NA"s knit as blank spaces
+options(scipen = 1, knitr.kable.NA = '')
+```
+
+
+# Independent outcomes
+
+## From [`tidymodels`: *Get Started*](https://www.tidymodels.org/start/) 
+
+1. Beginning: The `recipes` package is for pre-processing the data
+2. Middle step: The `parsnip` package lets us do all the model fitting and summarizing.
+3. Middle step: combine preprocessing and model into workflow using `workflow` package.
+4. Pipe the workflow into the fit function with a specified dataset to fit the model.
+5. 
+
+
+### 0. Loading packages and data
+The `tidymodels` package relies mostly on `parsnip` package for functions to specify and train models with different "engines."
+
+Before that, we can use the `recipes` package to pre-process the data.
+
+
+Recipes of the form `recipe(formula, data)` are ordered pre-processing steps applied to data before analysis (formula cannot use in-line functions, data transformations, or minus signs).
+
+1. specify `recipe(formula, data)` where the formula prescribes predictors on the RHS and outcomes on the LHS
+    * can add/update roles later as needed using `update_role()`; when you change a role from a predictor or outcome, then the variable will be retained but not included in the model (need to verify!).
+    
+2. Implement `step_` functions in desired order, making sure to remove any variables from which you derive features, create dummy variables from categorical if needed, make binary outcomes factors if needed, 
+    * useful selectors: has_role(),  has_type(), all_numeric(), all_nominal(), all_predictors(), and all_outcomes() plus tidyselect helpers
+    * impute:`bag_impute, imp_vars, impute_linear, knnimpute, lowerimpute, meanimpute, medianimpute, modeimpute, rollimpute, unkown`
+    * individual transformations: `BoxCox, bs` (B-spline basis), `hyperbolic, inverse, invlogit, log, logit, mutate, ns` (natural spline basis), `poly` (orthogonal polynomial basis), `relu` (smoothed rectified linear transformation), `sqrt, YeoJohnson`
+    * discretization: `discretize, cut`
+    * dummy variables and encodings: `bin2factor, count, date, dummy, factor2string, holiday, integer, novel, num2factor, ordinalscore, other, regex, relevel, string2factor, unknown,, unorder`
+    * interactions: `interact`
+    * normalization: `center, normalize, range, scale`
+    * multivariate transformations: `classdist, depth, geodist, ica` (ICA signal extraction), `isomap, kpca, kpca_poly, kpca_rbf, mutate_at, nnmf, pca, pls, ratio, spatialsign`
+    * filters: `corr, lincomb, nzv, rm, zv`
+    * row operations
+    * others: `intercept, profile, rename, rename_at, window`
+    
+
+
+### 2. Model fitting, tuning, and summarizing
+
+1. **`_type_(args)`**: Use `parsnip` package to specify *type* of model (`boost_tree, decision_tree(), linear_reg(), logistic_reg(), mars(), mlp(), multinom(), nearest_neighbor(), null_model(), rand_forest(), surv_reg(), svm_poly(), svm_rbf()`)
+    * `rand_forest`: `mtry` = number of predictors, `trees` = number of trees, `min_n` = min number of points in a node
+    * `logistic_reg`/`linear_reg`: `penalty` = total amount of regularization for glmnet, keras, spark, `mixture` = mixture amounts of different types of regularization 
+    * `decision_tree`: `cost_complexity` = the cost/complexity or $C_p$ used by CART models in `rpart`, `tree_depth` = maximum depth of tree in rpart and spark, `min_n` = min number of points in a node
+  
+
+2. **`set_mode()`**: Specify the *mode* of the model (e.g., classification, regression, censored regression, risk regression, clustering)
+    * `rand_forest`: "unknown", "regression", "classification"
+    * `logistic_reg`: "classification"
+    * `linear_reg`: "regression"
+    * `decision_tree`: "unknown", "regression", "classification"
+  
+3. **`set_engine()`**:  Specify the *engine* for the model, which is the package or external method used to fit the model (can use `shown_engines("_TYPE_")` to see current set)
+    * `rand_forest`: "ranger", "randomForest", "spark" (use `fit_xy()`)
+    * `logistic_reg`/`linear_reg`: "glm"/"lm", "glmnet", "stan", "spark", "keras"
+    * `decision_tree`: "rpart", "C5.0", "spark"
+    
+4. If not using workflow, **`fit(y ~ x1 + x2, data = _DATA_)`**: *fit* prescribed model formula
+
+### 3. Combine recipes and model fitting into workflow that can be applied to any dataset
+
+```{r tm-wf-example, eval = FALSE}
+flights_wf <- 
+  workflow() %>%
+  add_model(glm_spec) %>%
+  add_recipe(flights_rec)
+```
+
+
+
+### 4. Fit model to training data and summarize
+
+
+### 5. Make predictions
+### 6. Evaluate model 
+
+We can use roc_curve and roc_auc from the `yardstick` package.
+
+## Tidy models part 3
+> The cells data has class labels for 2019 cells — each cell is labeled as either poorly segmented (PS) or well-segmented (WS). Each also has a total of 56 predictors based on automated image analysis measurements. For example, avg_inten_ch_1 is the mean intensity of the data contained in the nucleus, area_ch_1 is the total size of the cell, and so on (some predictors are fairly arcane in nature).
+
+
+```{r tm-wrangle}
+library(tidymodels) # for the rsample package, along with the rest of tidymodels
+
+# Helper packages
+library(modeldata)  # for the cells data
+
+# load data
+data(cells, package = "modeldata")
+```
+
+```{r explore}
+cells %>% 
+  count(class) %>% 
+  mutate(prop = n/sum(n))
+```
+```{r tm-split-data}
+set.seed(123)
+
+cells_split <- initial_split(data = cells %>%
+                               select(-case), 
+                             prop = 3/4, strata = )
+
+cells_train <- training(cells_split)
+cells_test <- testing(cells_split)
+
+# check split
+ggplot(cells_train, )
+```
+
+
+```{r tm-recipes}
+```
+
+
+
+
+```{r tm-workflow}
+# specify model
+glm_spec <- logistic_reg() %>%
+  set_engine("glm") 
+
+# create workflow that can be applied to any dataset
+flights_wf <- 
+  workflow() %>%
+  add_model(glm_spec) %>%
+  add_recipe(flights_rec)
+```
+
+```{r tm-fit-summarize}
+
+```
+
+
+
+### 5. Make predictions
+  
+```{r tm-predictions}
+
+```
+
+
+### 6. Evaluate model
+
+We can use roc_curve and roc_auc from the `yardstick` package.
+```{r tm-roc-curve}
+```
+
+
+
+
+
+
+## From ISLR Lab 8.3: Decision Trees (p. 323)
+```{r ISLR1}
+# load packages
+library(tree)
+library(ISLR)
+```
+```{r tidymodels}
+# based on http://www.rebeccabarter.com/blog/2020-03-25_machine_learning/
+library(tidymodels)
+library(workflows)
+library(tune)
+library(modeldata)
+# from tidymodels
+library(readr)
+library(broom.mixed)
+library(dotwhisker)
+```
+
+### Carseats dataset
+The *Carseats* dataset has 400 stores of where 11 variables were measured on car seat sales: 3 categorical and 8 quantitative. We want to predict whether the sales are high, meaning greater than 8 thousand at a store. 
+```{r include = FALSE}
+# load and explore data
+data(Carseats)
+dim(Carseats)
+names(Carseats)
+#skimr::skim(Carseats)
+```
+
+We start by creating the `highsales` binary variable.
+```{r get-data}
+# create binary sales variable (make sure it's a factor)
+carseats <- mutate(Carseats, 
+                   highsales = factor(ifelse(Sales <= 8, "no", "yes")))
+```
+
+
+```{r tidy-preprocessing}
+# split data
+set.seed(52)
+# run splitting function
+carseats.split <- rsample::initial_split(carseats, prop = 0.75)
+
+# get training set
+carseats.train <- training(carseats.split)
+
+# get test set
+carseats.test <- testing(carseats.split)
+
+# get cross-validated version of training set
+carseats.cv <- vfold_cv(carseats.train)
+```
+
+We can then fit a single classification tree using `tree()` in the `tree` package:
+```{r islr-fit-tree}
+# fit classification tree
+tree.carseats <- tree(highsales~ . - Sales, data = carseats)
+summary(tree.carseats)
+```
+
+```{r compare-tree-defaults, eval = FALSE, echo = FALSE}
+tree.carseats.gini <- tree(highsales~ . - Sales, data = carseats, 
+                        split = "gini")
+tree.carseats.deviance <- tree(highsales~ . - Sales, data = carseats, 
+                            split = "deviance")
+summary(tree.carseats.gini)
+summary(tree.carseats.deviance)
+```
+
+Note the following:  
+
+* `.-Sales` means *regress on everything except the Sales variable*; 
+* the default splitting method is based on the *deviance* (alternative: `gini`), $-2\sum_m\sum_kn_{mk}\log(\hat p_{mk})$ where $n_{mk}$ is the number of observations in the $m$th terminal node that belong to class $k$; small deviance is good; and 
+* the misclassification error rate provided is the *training* error rate 
+* the residual mean deviance is the deviance divided by $n - |T_0|$
+
+```{r tidy-workflow, eval = FALSE}
+# specify the model inputs (and any preprocessing)
+carseats.recipe <- recipe(highsales ~ . , data = carseats) %>%
+  step_rm(Sales)
+
+# prep data
+carseats.prepped <- prep(carseats.recipe, carseats) %>%
+  juice()
+
+# specify the algorithm
+carseats.tree <- 
+  decision_tree() %>%
+  set_engine("rpart") %>% # cost_complexity (cp)
+  set_mode("classification")
+
+# put model and recipes together into workflow
+carseats.workflow <-
+  workflow() %>%
+  add_model(carseats.tree)
+
+# tune parameters if needed (not needed here)
+
+# finalize workflow after tuning parameters (if needed)
+
+# get training model
+carseats.tree.fit <- last_fit(carseats.workflow, carseats.split)
+
+```
+
+
+We can display the tree using `plot()` 
+```{r islr-display}
+plot(tree.carseats)
+```
+# Correlated binary outcomes
+
+## Depression data
+
+```{r}
+data("DepressionDemo")
+```
+Simulated dataset of a randomized clinical trial (N = 150) to illustrate fitting of (G)LMM trees.
+
+
+A data frame containing 150 observations on 6 variables:
+
+`depression` 
+numeric. Continuous treatment outcome variable (range: 3-16, M = 9.12, SD = 2.66).
+
+`treatment` 
+factor. Binary treatment variable.
+
+`cluster` 
+factor. Indicator for cluster with 10 levels.
+
+`age` 
+numeric. Continuous partitioning variable (range: 18-69, M = 45, SD = 9.56).
+
+`anxiety` 
+numeric. Continuous partitioning variable (range: 3-18, M = 10.26, SD = 3.05).
+
+`duration` 
+numeric. Continuous partitioning variable (range: 1-17, M = 6.97, SD = 2.90).
+
+`depression_bin` 
+factor. Binarized treatment outcome variable (0 = recovered, 1 = not recovered).
+
+The data were generated such that the duration and anxiety covariates characterized three subgroups with differences in treatment effects. The cluster variable was used to introduce a random intercept that should be accounted for. The treatment outcome is an index of depressive symptomatology.
+
+
